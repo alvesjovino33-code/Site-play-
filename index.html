@@ -1,1 +1,437 @@
-http://localhost:8080/index.html 
+http://<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arena Play - Transmissão</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: #0b0f19; color: #fff; font-family: 'Segoe UI', Arial, sans-serif; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 15px; }
+
+        /* 🏟️ TOPO COM A SUA LOGO */
+        .brand-header { text-align: center; margin-bottom: 10px; margin-top: 5px; cursor: pointer; user-select: none; }
+        .brand-logo { font-size: 24px; font-weight: bold; color: #eab308; text-transform: uppercase; letter-spacing: 1px; text-shadow: 0 0 10px rgba(234, 179, 8, 0.3); }
+        .brand-sub { font-size: 11px; color: #64748b; font-weight: 500; margin-top: 2px; }
+
+        /* 💡 LETREIRO ROTATIVO */
+        .ticker-container { width: 100%; max-width: 650px; background: rgba(30, 41, 59, 0.3); border: 1px dashed #1e293b; border-radius: 8px; padding: 10px; margin-bottom: 15px; text-align: center; min-height: 54px; display: flex; align-items: center; justify-content: center; }
+        .ticker-text { font-size: 12px; color: #eab308; line-height: 1.4; transition: opacity 0.4s ease-in-out; }
+
+        /* 📺 CONTAINER DO PLAYER EXCLUSIVO ARENA */
+        .video-wrapper { width: 100%; max-width: 650px; background: #000; border-radius: 12px; overflow: hidden; border: 2px solid #1e293b; aspect-ratio: 16/9; box-shadow: 0 10px 25px rgba(0,0,0,0.5); position: relative; display: flex; align-items: center; justify-content: center; }
+        
+        /* Ajuste do container quando entrar em Tela Cheia para manter os botões certos */
+        .video-wrapper:fullscreen { max-width: 100vw !important; width: 100vw !important; height: 100vh !important; border: none !important; border-radius: 0 !important; }
+        .video-wrapper:-webkit-full-screen { max-width: 100vw !important; width: 100vw !important; height: 100vh !important; border: none !important; border-radius: 0 !important; }
+
+        iframe { width: 100%; height: 100%; border: none; outline: none; display: block; }
+        
+        /* Player Customizado Totalmente Bloqueado contra Toques */
+        .meu-player-nativo { width: 100%; height: 100%; background: #000; display: block; outline: none; pointer-events: none; } /* 🚫 pointer-events: none impede pausar ou dar 2 toques */
+        
+        /* 🚫 OCULTA BARRA DE PROGRESSO/TEMPO NATIVA TOTALMENTE */
+        .meu-player-nativo::-webkit-media-controls { display: none !important; }
+        .meu-player-nativo::-webkit-media-controls-enclosure { display: none !important; }
+
+        /* Marca d'água */
+        .player-watermark { position: absolute; top: 12px; right: 12px; background: rgba(11, 15, 25, 0.6); color: #eab308; padding: 4px 8px; font-size: 11px; font-weight: bold; border-radius: 4px; pointer-events: none; border: 1px solid rgba(234, 179, 8, 0.3); letter-spacing: 0.5px; z-index: 15; }
+
+        /* 📱 BOTÃO REFEITO PARA DEITAR A TELA NA MARRA */
+        .btn-expandir-tela { position: absolute; bottom: 12px; right: 12px; background: #eab308; color: #000; border: none; padding: 8px 14px; font-size: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.6); z-index: 20; transition: 0.2s; text-transform: uppercase; }
+        .btn-expandir-tela:hover { background: #ca9f07; transform: scale(1.05); }
+
+        /* 📱 ÁREA DE INFORMAÇÕES DO EVENTO E BOTÕES EXTERNOS */
+        .evento-info { width: 100%; max-width: 650px; margin-top: 15px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+        
+        /* Bloco do Nome do Jogo + Botão Atualizar */
+        .confronto-container { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 0 10px; }
+        .evento-titulo { font-size: 18px; font-weight: bold; color: #f3f4f6; text-align: center; line-height: 1.2; }
+        
+        /* Botão Atualizar */
+        .btn-recarregar-sinal { background: #eab308; color: #000; border: none; padding: 6px 12px; font-size: 11px; font-weight: bold; border-radius: 20px; cursor: pointer; text-transform: uppercase; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 6px rgba(234, 179, 8, 0.2); transition: 0.2s; flex-shrink: 0; }
+        .btn-recarregar-sinal:hover { background: #ca9f07; transform: scale(1.03); }
+
+        /* Grade para as Opções Extras de Sinais (Abaixo do Título) */
+        .opcoes-sinais-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%; margin-top: 5px; }
+        .btn-opcao-dinamica { border: none; padding: 10px 18px; font-size: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.3); text-transform: uppercase; transition: 0.2s; color: #fff; background: #ef4444; }
+        .btn-opcao-dinamica:hover { background: #dc2626; }
+        .btn-opcao-dinamica.ativo { background: #22c55e; border: 1px solid #fff; }
+
+        /* 🚀 CAIXA DO APP */
+        .download-box { width: 100%; max-width: 650px; background: #111827; border: 1px solid #1e293b; border-radius: 12px; padding: 15px; margin-top: 20px; text-align: center; }
+        .download-text { font-size: 14px; color: #94a3b8; margin-bottom: 15px; line-height: 1.5; }
+        .download-text strong { color: #eab308; }
+        .btn-download-app { display: inline-block; width: 100%; max-width: 400px; background: #eab308; color: #000; text-decoration: none; padding: 14px; font-size: 14px; font-weight: bold; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.5px; transition: 0.2s; box-shadow: 0 4px 15px rgba(234, 179, 8, 0.2); }
+        .btn-download-app:hover { background: #ca9f07; transform: translateY(-1px); }
+
+        .legal-footer { width: 100%; max-width: 650px; margin-top: auto; padding: 25px 10px 10px 10px; text-align: center; border-top: 1px solid #1e293b; color: #475569; font-size: 11px; line-height: 1.6; }
+
+        /* 🔒 MODAL DE AUTENTICAÇÃO */
+        .modal-auth { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 15, 25, 0.95); z-index: 99998; justify-content: center; align-items: center; padding: 20px; }
+        .auth-content { width: 100%; max-width: 360px; background: #111827; border: 1px solid #1e293b; border-radius: 12px; padding: 25px; text-align: center; }
+
+        /* 🔒 PAINEL GERENCIADOR */
+        .modal-painel { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 15, 25, 0.98); z-index: 99999; justify-content: center; align-items: center; padding: 20px; }
+        .painel-content { width: 100%; max-width: 480px; background: #111827; border: 1px solid #1e293b; border-radius: 12px; padding: 22px; max-height: 90vh; overflow-y: auto; }
+        .painel-title { font-size: 18px; font-weight: bold; color: #eab308; margin-bottom: 15px; border-bottom: 1px solid #1e293b; padding-bottom: 10px; }
+        
+        .form-group { margin-bottom: 15px; display: flex; flex-direction: column; gap: 6px; }
+        .form-group label { font-size: 13px; color: #94a3b8; font-weight: 600; }
+        .form-input { background: #1e293b; border: 1px solid #334155; border-radius: 6px; padding: 10px; color: #fff; font-size: 14px; width: 100%; }
+        .form-input:focus { border-color: #eab308; outline: none; }
+
+        .container-lista-links { background: #0b0f19; border: 1px dashed #334155; padding: 12px; border-radius: 8px; display: flex; flex-direction: column; gap: 10px; margin-top: 5px; }
+        .item-link-adicionado { display: flex; gap: 6px; align-items: center; background: #1e293b; padding: 6px; border-radius: 6px; }
+        .item-link-adicionado input { flex: 1; font-size: 12px; padding: 6px; }
+        .btn-remover-linha { background: #ef4444; color: #fff; border: none; padding: 6px 10px; font-size: 11px; font-weight: bold; border-radius: 4px; cursor: pointer; }
+        
+        .btn-adicionar-mais-links { background: #22c55e; color: #fff; border: none; padding: 8px; border-radius: 5px; font-size: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-top: 5px; text-align: center; }
+
+        .painel-acoes-row { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-publicar { flex: 1; background: #eab308; color: #000; border: none; padding: 12px; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .btn-copiar { background: #334155; color: #fff; border: 1px solid #475569; padding: 12px; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; }
+        .btn-fechar-painel { background: none; border: none; color: #ef4444; font-size: 13px; text-decoration: underline; margin-top: 15px; cursor: pointer; display: block; text-align: center; width: 100%; }
+    </style>
+</head>
+<body>
+
+    <div class="brand-header" onclick="abrirModalChave()">
+        <div class="brand-logo">🏟️ ARENA PLAY</div>
+        <div class="brand-sub">Transmissão Exclusiva via Stories</div>
+    </div>
+
+    <div class="ticker-container">
+        <div class="ticker-text" id="tickerBox">Carregando informações do Arena Play...</div>
+    </div>
+
+    <div class="video-wrapper" id="videoWrapperArea">
+        <div class="player-watermark">🏟️ ARENA PLAY</div>
+        
+        <button class="btn-expandir-tela" id="btnFullscreenCustom" onclick="alternarTelaCheiaReprodutor()">📺 Expandir Tela</button>
+        
+        <div id="playerContainer" style="width:100%; height:100%;">
+            <video id="arenaVideoPlayer" class="meu-player-nativo" autoplay playsinline></video>
+        </div>
+    </div>
+
+    <div class="evento-info">
+        <div class="confronto-container">
+            <div class="evento-titulo" id="txtConfronto">Carregando transmissão ao vivo...</div>
+            <button class="btn-recarregar-sinal" onclick="recarregarSinalAtual()">🔄 Atualizar</button>
+        </div>
+        
+        <div id="areaBotoesOpcoesAdicionais" class="opcoes-sinais-grid"></div>
+    </div>
+
+    <div class="download-box">
+        <div class="download-text">
+            Baixe o app para mais! Tenha acesso a todo o <strong>conteúdo ao vivo no Play 2.0</strong> e assista aos maiores clássicos na nossa exclusiva <strong>seção de futebol histórico</strong>!
+        </div>
+        <a href="https://www.appcreator24.com/app4031139-tu9c7r" class="btn-download-app" target="_blank">
+            📲 BAIXAR APLICATIVO OFICIAL GRÁTIS
+        </a>
+    </div>
+
+    <div class="legal-footer">
+        © Arena Play 2026 · Este site não aloja nem transmite sinais próprios. Caso o player trave, use o botão ao lado do nome do jogo para "Atualizar" ou mude a opção de sinal.
+    </div>
+
+    <div class="modal-auth" id="janelaAutenticacao">
+        <div class="auth-content">
+            <div class="painel-title" style="font-size: 16px; margin-bottom: 12px;">Chave de Acesso</div>
+            <input type="password" id="inputSenhaAcesso" class="form-input" placeholder="Digite a senha administrativa" style="text-align: center; margin-bottom: 15px;">
+            <button class="btn-publicar" onclick="validarSenhaPainel()">Entrar no Painel</button>
+            <button class="btn-fechar-painel" onclick="fecharModalChave()">Cancelar</button>
+        </div>
+    </div>
+
+    <div class="modal-painel" id="painelLinkStories">
+        <div class="painel-content">
+            <div class="painel-title">⚙️ Painel Multiplex Arena Play</div>
+            
+            <div class="form-group">
+                <label>Nome do Confronto / Evento:</label>
+                <input type="text" id="inputNomeEvento" class="form-input" placeholder="Ex: Cruzeiro x Boca Juniors">
+            </div>
+            
+            <div class="form-group">
+                <label>Canais / Links de Sinais Disponíveis:</label>
+                <small style="color: #64748b; font-size:11px;">O primeiro da lista será sempre o principal inicial.</small>
+                
+                <div id="listaInputsCanais" class="container-lista-links"></div>
+                
+                <button type="button" class="btn-adicionar-mais-links" onclick="criarNovaLinhaDeLink('')">➕ Adicionar Nova Opção de Sinal</button>
+            </div>
+            
+            <div class="painel-acoes-row">
+                <button class="btn-copiar" onclick="copiarLinkDaPagina()">📋 Copiar Link</button>
+                <button class="btn-publicar" onclick="salvarNoFirebaseMultiLinks()">Salvar e Publicar Tudo</button>
+            </div>
+            
+            <button class="btn-fechar-painel" onclick="fecharPainelStories()">Fechar Configurações</button>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDWvfsfgRT0lzzU73GYCAVWlba9mVExIHE",
+            authDomain: "arena-play-40761.firebaseapp.com",
+            databaseURL: "https://arena-play-40761-default-rtdb.firebaseio.com",
+            projectId: "arena-play-40761",
+            storageBucket: "arena-play-40761.firebasestorage.app",
+            messagingSenderId: "741818143980",
+            appId: "1:741818143980:web:6a68e1411c3f1f01e301c9"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const dbRef = firebase.database().ref("transmissao_stories");
+
+        let arrayLinksSinais = [];
+        let linkSinalEmExecucao = "";
+        let hlsInstancia = null;
+
+        const frasesInformativas = [
+            "<strong>Você sabia?</strong> O Arena Play nasceu com o objetivo de trazer o futebol premium de forma 100% gratuita para a galera. Quem tem o app não precisa de assinatura cara!",
+            "<strong>Você sabia?</strong> No aplicativo Arena Play, além dos jogos de hoje, você tem uma seção exclusiva de Futebol Histórico para rever finais lendárias da Champions e da Libertadores!"
+        ];
+        let fraseIndexAtual = 0;
+
+        function rotacionarFrases() {
+            const caixaTexto = document.getElementById('tickerBox');
+            if (caixaTexto) {
+                caixaTexto.style.opacity = 0;
+                setTimeout(() => {
+                    caixaTexto.innerHTML = frasesInformativas[fraseIndexAtual];
+                    caixaTexto.style.opacity = 1;
+                    fraseIndexAtual = (fraseIndexAtual + 1) % frasesInformativas.length;
+                }, 400);
+            }
+        }
+        setInterval(rotacionarFrases, 7000);
+        rotacionarFrases();
+
+        // Firebase em tempo real
+        dbRef.on("value", (snapshot) => {
+            const dados = snapshot.val();
+            if (dados) {
+                document.getElementById('txtConfronto').innerText = dados.nomeEvento || "Nenhum evento ativo";
+                
+                if (dados.linksLista) {
+                    arrayLinksSinais = dados.linksLista.filter(l => l && l.trim() !== "");
+                } else if (dados.linkPrincipal) {
+                    arrayLinksSinais = [dados.linkPrincipal];
+                    if(dados.linkBackup) arrayLinksSinais.push(dados.linkBackup);
+                } else {
+                    arrayLinksSinais = [];
+                }
+
+                gerarBotoesDeSinalFlutuantes();
+
+                if (arrayLinksSinais.length > 0 && linkSinalEmExecucao === "") {
+                    renderizarVideo(arrayLinksSinais[0], 0);
+                }
+            }
+        });
+
+        function gerarBotoesDeSinalFlutuantes() {
+            const containerAbas = document.getElementById('areaBotoesOpcoesAdicionais');
+            containerAbas.innerHTML = "";
+
+            if (arrayLinksSinais.length > 1) {
+                for (let i = 0; i < arrayLinksSinais.length; i++) {
+                    const btnOpcao = document.createElement('button');
+                    btnOpcao.className = "btn-opcao-dinamica";
+                    btnOpcao.id = `btn-sinal-${i}`;
+                    btnOpcao.innerText = `Sinal ${i + 1}`;
+                    
+                    if (linkSinalEmExecucao === arrayLinksSinais[i]) {
+                        btnOpcao.classList.add("ativo");
+                    }
+
+                    btnOpcao.onclick = function() {
+                        renderizarVideo(arrayLinksSinais[i], i);
+                    };
+                    containerAbas.appendChild(btnOpcao);
+                }
+            }
+        }
+
+        function recarregarSinalAtual() {
+            if (linkSinalEmExecucao) {
+                const indexAtual = arrayLinksSinais.indexOf(linkSinalEmExecucao);
+                renderizarVideo(linkSinalEmExecucao, indexAtual >= 0 ? indexAtual : 0);
+            }
+        }
+
+        // 📱 NOVO MOTOR DE ROTAÇÃO E EXPANSÃO INTEGRADA (FORÇA DEITAR EM MODO PAISAGEM)
+        function alternarTelaCheiaReprodutor() {
+            const elementoJanela = document.getElementById('videoWrapperArea');
+
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                // Abre o container em tela cheia (mantendo as travas e marcas d'água profissionais)
+                if (elementoJanela.requestFullscreen) {
+                    elementoJanela.requestFullscreen().then(forcarRotacaoTela).catch(() => {});
+                } else if (elementoJanela.webkitRequestFullscreen) { /* Safari / iOS */
+                    elementoJanela.webkitRequestFullscreen();
+                }
+            } else {
+                // Sai da tela cheia caso o usuário aperte de novo
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                }
+                if (screen.orientation && screen.orientation.unlock) {
+                    screen.orientation.unlock();
+                }
+            }
+        }
+
+        // Força o celular a girar deitado via código
+        function forcarRotacaoTela() {
+            if (screen.orientation && screen.orientation.lock) {
+                screen.orientation.lock('landscape').catch(function(error) {
+                    console.log("Rotação automática bloqueada ou precisa girar o celular físico.");
+                });
+            }
+        }
+
+        // MOTOR DE VÍDEO PROFISSIONAL BLOQUEADO CONTRA TOQUES EXTERNOS
+        function renderizarVideo(url, indexSinal) {
+            linkSinalEmExecucao = url;
+            const container = document.getElementById('playerContainer');
+            const btnExpandir = document.getElementById('btnFullscreenCustom');
+            
+            const todosBotoes = document.querySelectorAll('.btn-opcao-dinamica');
+            todosBotoes.forEach(b => b.classList.remove('ativo'));
+            const btnAtivo = document.getElementById(`btn-sinal-${indexSinal}`);
+            if (btnAtivo) btnAtivo.classList.add('ativo');
+
+            if (hlsInstancia) {
+                hlsInstancia.destroy();
+                hlsInstancia = null;
+            }
+
+            if (url.includes("youtube.com") || url.includes("youtu.be")) {
+                btnExpandir.style.display = "none"; // YouTube gerencia sua própria expansão
+                let videoId = "";
+                if (url.includes("youtu.be/")) { videoId = url.split("youtu.be/")[1].split("?")[0]; }
+                else if (url.includes("v=")) { videoId = url.split("v=")[1].split("&")[0]; }
+                else if (url.includes("embed/")) { videoId = url.split("embed/")[1].split("?")[0]; }
+
+                const embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&controls=1&modestbranding=1&autoplay=1`;
+                container.innerHTML = `<iframe src="${embedUrl}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+            } 
+            else {
+                btnExpandir.style.display = "flex";
+                // Injeta o player com travas completas nativas contra toques (estilo ao vivo na TV)
+                container.innerHTML = `<video id="arenaVideoPlayer" class="meu-player-nativo" autoplay playsinline></video>`;
+                const videoElement = document.getElementById('arenaVideoPlayer');
+
+                if (Hls.isSupported() && (url.includes(".m3u8") || !videoElement.canPlayType('application/vnd.apple.mpegurl'))) {
+                    hlsInstancia = new Hls({
+                        maxMaxBufferLength: 10,
+                        enableWorker: true
+                    });
+                    hlsInstancia.loadSource(url);
+                    hlsInstancia.attachMedia(videoElement);
+                    hlsInstancia.on(Hls.Events.MANIFEST_PARSED, function() {
+                        videoElement.play().catch(() => {});
+                    });
+                } else {
+                    videoElement.src = url;
+                    videoElement.load();
+                    videoElement.play().catch(() => {});
+                }
+            }
+        }
+
+        // GERENCIAMENTO ADMINISTRATIVO
+        function criarNovaLinhaDeLink(valorLink = "") {
+            const containerInputs = document.getElementById('listaInputsCanais');
+            const divItem = document.createElement('div');
+            divItem.className = "item-link-adicionado";
+            
+            const inputLink = document.createElement('input');
+            inputLink.type = "text";
+            inputLink.className = "form-input campo-link-dinamico";
+            inputLink.placeholder = "Cole a URL do sinal (.m3u8, .mp4 ou YouTube)";
+            inputLink.value = valorLink;
+            
+            const btnRemover = document.createElement('button');
+            btnRemover.type = "button";
+            btnRemover.className = "btn-remover-linha";
+            btnRemover.innerText = "X";
+            btnRemover.onclick = function() { divItem.remove(); };
+            
+            divItem.appendChild(inputLink);
+            divItem.appendChild(btnRemover);
+            containerInputs.appendChild(divItem);
+        }
+
+        function abrirModalChave() {
+            document.getElementById('inputSenhaAcesso').value = "";
+            document.getElementById('janelaAutenticacao').style.display = "flex";
+        }
+        function fecharModalChave() { document.getElementById('janelaAutenticacao').style.display = "none"; }
+
+        function validarSenhaPainel() {
+            const senhaInserida = document.getElementById('inputSenhaAcesso').value;
+            if (senhaInserida === "YAGO22") {
+                fecharModalChave();
+                document.getElementById('painelLinkStories').style.display = "flex";
+                document.getElementById('listaInputsCanais').innerHTML = "";
+                
+                dbRef.once("value").then((snapshot) => {
+                    const dados = snapshot.val();
+                    if(dados) {
+                        document.getElementById('inputNomeEvento').value = dados.nomeEvento || "";
+                        if(dados.linksLista && dados.linksLista.length > 0) {
+                            dados.linksLista.forEach(link => { if(link) criarNovaLinhaDeLink(link); });
+                        } else {
+                            criarNovaLinhaDeLink(dados.linkPrincipal || "");
+                        }
+                    }
+                });
+            } else {
+                alert("Chave incorreta!");
+                fecharModalChave();
+            }
+        }
+
+        function fecharPainelStories() { document.getElementById('painelLinkStories').style.display = "none"; }
+
+        function salvarNoFirebaseMultiLinks() {
+            const nome = document.getElementById('inputNomeEvento').value.trim();
+            const inputsClube = document.getElementsByClassName('campo-link-dinamico');
+            
+            let listaLinksFormatados = [];
+            for (let i = 0; i < inputsClube.length; i++) {
+                let urlLimpa = inputsClube[i].value.trim();
+                if(urlLimpa !== "") listaLinksFormatados.push(urlLimpa);
+            }
+
+            if (!nome) return alert("Insira o nome do evento!");
+            if (listaLinksFormatados.length === 0) return alert("Insira pelo menos um link!");
+
+            dbRef.set({
+                nomeEvento: nome,
+                linkPrincipal: listaLinksFormatados[0],
+                linksLista: listaLinksFormatados
+            }).then(() => {
+                alert("Sincronizado!");
+                fecharPainelStories();
+            });
+        }
+
+        function copiarLinkDaPagina() {
+            navigator.clipboard.writeText(window.location.href).then(() => { alert("Link copiado!"); });
+        }
+    </script>
+</body>
+</html>
+/index.html 
