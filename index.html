@@ -77,10 +77,11 @@
         .form-group label { font-size: 13px; color: #94a3b8; font-weight: 600; }
         .form-input { background: #1e293b; border: 1px solid #334155; border-radius: 6px; padding: 10px; color: #fff; font-size: 14px; width: 100%; }
         
-        /* 🛠️ ESTILOS DO PAINEL DE MANUTENÇÃO ADM */
+        /* 🛠️ CONTROLES DA MANUTENÇÃO PERSONALIZADA */
         .painel-manutencao-box { background: rgba(239, 68, 68, 0.1); border: 1px dashed #ef4444; border-radius: 8px; padding: 12px; margin-top: 15px; }
-        .m-adm-title { font-size: 13px; font-weight: bold; color: #ef4444; margin-bottom: 8px; display: flex; align-items: center; gap: 4px; }
-        .btn-manutencao-acao { background: #ef4444; color: #fff; border: none; padding: 10px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; width: 100%; margin-top: 8px; }
+        .m-adm-title { font-size: 13px; font-weight: bold; color: #ef4444; margin-bottom: 8px; }
+        .manutencao-inputs-row { display: flex; gap: 8px; }
+        .btn-manutencao-acao { background: #ef4444; color: #fff; border: none; padding: 10px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; width: 100%; margin-top: 10px; }
         .btn-manutencao-acao.desativar { background: #22c55e; }
 
         .container-lista-links { background: #0b0f19; border: 1px dashed #334155; padding: 12px; border-radius: 8px; display: flex; flex-direction: column; gap: 10px; margin-top: 5px; }
@@ -169,15 +170,13 @@
             </div>
 
             <div class="painel-manutencao-box">
-                <div class="m-adm-title">🛠️ Controle de Manutenção Automática</div>
-                <div class="form-group" style="margin-bottom: 5px;">
-                    <label style="color:#f3f4f6;">Definir tempo de duração:</label>
-                    <select id="selectTempoManutencao" class="form-input">
-                        <option value="15">15 Minutos</option>
-                        <option value="30">30 Minutos</option>
-                        <option value="40" selected>40 Minutos</option>
-                        <option value="60">1 Hora (60 Minutos)</option>
-                        <option value="120">2 Horas</option>
+                <div class="m-adm-title">🛠️ Controle de Manutenção Customizada</div>
+                <div class="manutencao-inputs-row">
+                    <input type="number" id="inputValorTempoManutencao" class="form-input" placeholder="Ex: 10, 30, 45" value="10" style="flex: 1;">
+                    <select id="selectUnidadeTempoManutencao" class="form-input" style="flex: 1;">
+                        <option value="segundos" selected>Segundos</option>
+                        <option value="minutos">Minutos</option>
+                        <option value="horas">Horas</option>
                     </select>
                 </div>
                 <button type="button" id="btnTriggerManutencao" class="btn-manutencao-acao" onclick="alternarEstadoManutencaoFirebase()">Ativar Modo Manutenção</button>
@@ -236,13 +235,12 @@
         setInterval(rotacionarFrases, 7000);
         rotacionarFrases();
 
-        // ESCUTA EM TEMPO REAL DO FIREBASE
+        // ESCUTA EM TEMPO REAL CORRIGIDA DO FIREBASE
         dbRef.on("value", (snapshot) => {
             const dados = snapshot.val();
             if (dados) {
                 document.getElementById('txtConfronto').innerText = dados.nomeEvento || "Nenhum evento ativo";
                 
-                // Gerenciamento de links
                 if (dados.linksLista) {
                     arrayLinksSinais = dados.linksLista.filter(l => l && l.trim() !== "");
                 } else if (dados.linkPrincipal) {
@@ -250,8 +248,6 @@
                 } else {
                     arrayLinksSinais = [];
                 }
-
-                gerarBotoesDeSinalFlutuantes();
 
                 // MONITOR DE MANUTENÇÃO DINÂMICA
                 const timestampAtual = Date.now();
@@ -261,8 +257,12 @@
                 } else {
                     sistemaEmManutencaoAtiva = false;
                     desativarInterfaceManutencaoUsuario();
-                    if (arrayLinksSinais.length > 0 && linkSinalEmExecucao === "") {
+                    
+                    // Só renderiza se os sinais mudarem ou se o player estiver totalmente vazio
+                    if (arrayLinksSinais.length > 0 && (linkSinalEmExecucao === "" || !arrayLinksSinais.includes(linkSinalEmExecucao))) {
                         renderizarVideo(arrayLinksSinais[0], 0);
+                    } else {
+                        gerarBotoesDeSinalFlutuantes();
                     }
                 }
                 atualizarBotaoPainelAdministrativo();
@@ -278,8 +278,18 @@
                     btnOpcao.className = "btn-opcao-dinamica";
                     btnOpcao.id = `btn-sinal-${i}`;
                     btnOpcao.innerText = `Sinal ${i + 1}`;
-                    if (linkSinalEmExecucao === arrayLinksSinais[i]) btnOpcao.classList.add("ativo");
-                    btnOpcao.onclick = function() { renderizarVideo(arrayLinksSinais[i], i); };
+                    
+                    if (linkSinalEmExecucao === arrayLinksSinais[i]) {
+                        btnOpcao.classList.add("ativo");
+                    }
+                    
+                    // Função de clique totalmente independente e protegida
+                    btnOpcao.onclick = (function(urlSinal, index) {
+                        return function() {
+                            renderizarVideo(urlSinal, index);
+                        };
+                    })(arrayLinksSinais[i], i);
+                    
                     containerAbas.appendChild(btnOpcao);
                 }
             }
@@ -292,8 +302,7 @@
             }
         }
 
-        // CONTROLADOR DE EXIBIÇÃO DA MANUTENÇÃO NO CLIENTE
-        function activarInterfaceManutencaoUsuario(fimTimestamp) {
+        function ativarInterfaceManutencaoUsuario(fimTimestamp) {
             document.getElementById('telaManutencaoFronte').style.display = "flex";
             document.getElementById('btnFullscreenCustom').style.display = "none";
             document.getElementById('areaBotoesOpcoesAdicionais').innerHTML = "";
@@ -309,11 +318,12 @@
 
                 if (restante <= 0) {
                     clearInterval(loopCronometroInterval);
-                    dbRef.child("manutencaoAte").set(0); // Desliga no Firebase automaticamente
+                    dbRef.child("manutencaoAte").set(0);
                 } else {
-                    const horas = Math.floor((restante / (1000 * 60 * 60)) % 24);
-                    const minutos = Math.floor((restante / (1000 * 60)) % 60);
-                    const segundos = Math.floor((restante / 1000) % 60);
+                    const totalSegundos = Math.floor(restante / 1000);
+                    const horas = Math.floor(totalSegundos / 3600);
+                    const minutos = Math.floor((totalSegundos % 3600) / 60);
+                    const segundos = totalSegundos % 60;
                     
                     document.getElementById('cronometroManutencao').innerText = 
                         `${horas.toString().padStart(2,'0')}:${minutos.toString().padStart(2,'0')}:${segundos.toString().padStart(2,'0')}`;
@@ -326,7 +336,6 @@
             clearInterval(loopCronometroInterval);
         }
 
-        // TELA CHEIA (DEITAR)
         function alternarTelaCheiaReprodutor() {
             const elementoJanela = document.getElementById('videoWrapperArea');
             if (!document.fullscreenElement && !document.webkitFullscreenElement) {
@@ -347,10 +356,10 @@
             }
         }
 
-        // RENDERIZADOR DE VÍDEO COMPACTO E PREPARADO CONTRA TOQUES
         function renderizarVideo(url, indexSinal) {
             if (sistemaEmManutencaoAtiva) return;
             linkSinalEmExecucao = url;
+            
             const container = document.getElementById('playerContainer');
             const btnExpandir = document.getElementById('btnFullscreenCustom');
             
@@ -382,16 +391,27 @@
                     videoElement.play().catch(() => {});
                 }
             }
+            gerarBotoesDeSinalFlutuantes();
         }
 
-        // LÓGICA DO PAINEL ADMINISTRATIVO COM O BOTÃO DE MANUTENÇÃO
+        // ALTERNAR ESTADO DE MANUTENÇÃO DINÂMICO
         function alternarEstadoManutencaoFirebase() {
             if (!sistemaEmManutencaoAtiva) {
-                const minutosSelecionados = parseInt(document.getElementById('selectTempoManutencao').value);
-                const alvoTimestamp = Date.now() + (minutosSelecionados * 60 * 1000);
+                const valorDigitado = parseInt(document.getElementById('inputValorTempoManutencao').value);
+                const unidade = document.getElementById('selectUnidadeTempoManutencao').value;
+                
+                if (isNaN(valorDigitado) || valorDigitado <= 0) {
+                    return alert("Insira um tempo válido maior que zero!");
+                }
+
+                let multiplicadorMs = 1000; // Segundos por padrão
+                if (unidade === "minutos") multiplicadorMs = 60 * 1000;
+                else if (unidade === "horas") multiplicadorMs = 60 * 60 * 1000;
+
+                const alvoTimestamp = Date.now() + (valorDigitado * multiplicadorMs);
                 
                 dbRef.child("manutencaoAte").set(alvoTimestamp).then(() => {
-                    alert(`Modo Manutenção ativado por ${minutosSelecionados} minutos!`);
+                    alert(`Modo Manutenção ligado por ${valorDigitado} ${unidade}!`);
                 });
             } else {
                 dbRef.child("manutencaoAte").set(0).then(() => {
@@ -494,3 +514,4 @@
     </script>
 </body>
 </html>
+
