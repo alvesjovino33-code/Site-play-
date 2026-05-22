@@ -17,7 +17,7 @@
         .ticker-container { width: 100%; max-width: 650px; background: rgba(30, 41, 59, 0.3); border: 1px dashed #1e293b; border-radius: 8px; padding: 10px; margin-bottom: 15px; text-align: center; min-height: 54px; display: flex; align-items: center; justify-content: center; }
         .ticker-text { font-size: 12px; color: #eab308; line-height: 1.4; transition: opacity 0.4s ease-in-out; }
 
-        /* 📺 CONTAINER DO PLAYER EXCLUSIVO ARENA */
+        /* 📺 CONTAINER DO PLAYER */
         .video-wrapper { width: 100%; max-width: 650px; background: #000; border-radius: 12px; overflow: hidden; border: 2px solid #1e293b; aspect-ratio: 16/9; box-shadow: 0 10px 25px rgba(0,0,0,0.5); position: relative; display: flex; align-items: center; justify-content: center; }
         
         .video-wrapper:fullscreen { max-width: 100vw !important; width: 100vw !important; height: 100vh !important; border: none !important; border-radius: 0 !important; }
@@ -25,35 +25,42 @@
 
         iframe { width: 100%; height: 100%; border: none; outline: none; display: block; }
         .meu-player-nativo { width: 100%; height: 100%; background: #000; display: block; outline: none; pointer-events: none; }
-        
         .meu-player-nativo::-webkit-media-controls { display: none !important; }
-        .meu-player-nativo::-webkit-media-controls-enclosure { display: none !important; }
 
-        /* Marca d'água */
+        /* 🛠️ TELA DE MANUTENÇÃO DINÂMICA (TEXTO DIRETO DO PAINEL) */
+        .canvas-manutencao-interna { width: 100%; height: 100%; background: #0c101d; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 25px; position: absolute; top:0; left:0; z-index: 10; border-radius: 10px; }
+        .c-m-aviso { font-size: 14px; font-weight: 800; color: #ef4444; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; animation: blinker 1.8s linear infinite; }
+        .c-m-titulo { font-size: 20px; font-weight: bold; color: #ffffff; text-transform: uppercase; margin-bottom: 16px; max-width: 90%; line-height: 1.4; letter-spacing: 0.5px; }
+        .c-m-logo-footer { font-size: 16px; font-weight: 900; color: #eab308; text-transform: uppercase; letter-spacing: 1px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 12px; width: 160px; margin-top: 5px; }
+
+        @keyframes blinker { 50% { opacity: 0.4; } }
+
+        /* Marca d'água superior */
         .player-watermark { position: absolute; top: 12px; right: 12px; background: rgba(11, 15, 25, 0.6); color: #eab308; padding: 4px 8px; font-size: 11px; font-weight: bold; border-radius: 4px; pointer-events: none; border: 1px solid rgba(234, 179, 8, 0.3); letter-spacing: 0.5px; z-index: 15; }
 
         /* 📱 BOTÃO EXPANDIR TELA */
-        .btn-expandir-tela { position: absolute; bottom: 12px; right: 12px; background: #eab308; color: #000; border: none; padding: 8px 14px; font-size: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.6); z-index: 20; transition: 0.2s; text-transform: uppercase; }
+        .btn-expandir-tela { position: absolute; bottom: 12px; right: 12px; background: #eab308; color: #000; border: none; padding: 8px 14px; font-size: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 10px rgba(0,0,0,0.6); z-index: 20; transition: 0.2s; text-transform: uppercase; }
         .btn-expandir-tela:hover { background: #ca9f07; transform: scale(1.05); }
-
-        /* 🛠️ TELA DE MANUTENÇÃO DINÂMICA (SOBREPÕE O VÍDEO) */
-        .maintenance-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #111827; z-index: 30; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
-        .m-title { font-size: 20px; font-weight: bold; color: #ef4444; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px; }
-        .m-timer { font-size: 32px; font-weight: 800; color: #eab308; font-family: monospace; margin: 10px 0; text-shadow: 0 0 10px rgba(234, 179, 8, 0.2); }
-        .m-desc { font-size: 13px; color: #94a3b8; max-width: 85%; line-height: 1.4; margin-bottom: 12px; }
-        .m-notice { font-size: 10px; color: #475569; font-style: italic; max-width: 90%; line-height: 1.3; border-top: 1px solid #1e293b; padding-top: 8px; }
+        .btn-expandir-tela .icon-fullscreen { display: none; width: 22px; height: 22px; border: 2.5px solid #000; border-radius: 4px; position: relative; }
+        
+        .video-wrapper:fullscreen .btn-expandir-tela,
+        .video-wrapper:-webkit-full-screen .btn-expandir-tela { background: rgba(255, 255, 255, 0.2); color: #fff; padding: 8px; border-radius: 50%; width: 40px; height: 40px; }
+        .video-wrapper:fullscreen .btn-expandir-tela .txt-btn,
+        .video-wrapper:-webkit-full-screen .btn-expandir-tela .txt-btn { display: none; }
+        .video-wrapper:fullscreen .btn-expandir-tela .icon-fullscreen,
+        .video-wrapper:-webkit-full-screen .btn-expandir-tela .icon-fullscreen { display: block; border-color: #fff; }
 
         /* 📱 INFORMAÇÕES DO EVENTO */
-        .evento-info { width: 100%; max-width: 650px; margin-top: 15px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
-        .confronto-container { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 0 10px; }
-        .evento-titulo { font-size: 18px; font-weight: bold; color: #f3f4f6; text-align: center; line-height: 1.2; }
+        .evento-info { width: 100%; max-width: 650px; margin-top: 15px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .confronto-container { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 0 10px; }
+        .evento-titulo { font-size: 16px; font-weight: bold; color: #f3f4f6; text-align: center; line-height: 1.4; max-width: 100%; word-break: break-word; }
         
-        .btn-recarregar-sinal { background: #eab308; color: #000; border: none; padding: 6px 12px; font-size: 11px; font-weight: bold; border-radius: 20px; cursor: pointer; text-transform: uppercase; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 6px rgba(234, 179, 8, 0.2); transition: 0.2s; flex-shrink: 0; }
-        .btn-recarregar-sinal:hover { background: #ca9f07; transform: scale(1.03); }
+        .btn-atualizar-sinal { background: #eab308; color: #000; border: none; padding: 8px 16px; font-size: 12px; font-weight: bold; border-radius: 20px; cursor: pointer; text-transform: uppercase; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 6px rgba(234, 179, 8, 0.2); transition: 0.2s; margin-top: 4px; }
+        .btn-atualizar-sinal:hover { background: #ca9f07; transform: scale(1.03); }
 
-        .opcoes-sinais-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%; margin-top: 5px; }
-        .btn-opcao-dinamica { border: none; padding: 10px 18px; font-size: 12px; font-weight: bold; border-radius: 6px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.3); text-transform: uppercase; transition: 0.2s; color: #fff; background: #ef4444; }
-        .btn-opcao-dinamica:hover { background: #dc2626; }
+        .opcoes-sinais-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%; margin-top: 12px; }
+        .btn-opcao-dinamica { border: none; padding: 12px 22px; font-size: 13px; font-weight: bold; border-radius: 6px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.3); text-transform: uppercase; transition: 0.2s; color: #fff; background: #2563eb; }
+        .btn-opcao-dinamica:hover { background: #1d4ed8; }
         .btn-opcao-dinamica.ativo { background: #22c55e; border: 1px solid #fff; }
 
         /* 🚀 CAIXA DO APP */
@@ -61,9 +68,8 @@
         .download-text { font-size: 14px; color: #94a3b8; margin-bottom: 15px; line-height: 1.5; }
         .download-text strong { color: #eab308; }
         .btn-download-app { display: inline-block; width: 100%; max-width: 400px; background: #eab308; color: #000; text-decoration: none; padding: 14px; font-size: 14px; font-weight: bold; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.5px; transition: 0.2s; box-shadow: 0 4px 15px rgba(234, 179, 8, 0.2); }
-        .btn-download-app:hover { background: #ca9f07; transform: translateY(-1px); }
 
-        .legal-footer { width: 100%; max-width: 650px; margin-top: auto; padding: 25px 10px 10px 10px; text-align: center; border-top: 1px solid #1e293b; color: #475569; font-size: 11px; line-height: 1.6; }
+        .legal-footer { width: 100%; max-width: 650px; margin-top: auto; padding: 25px 10px 10px 10px; text-align: center; border-top: 1px solid #1e293b; color: #475569; font-size: 11px; }
 
         /* 🔒 MODALS */
         .modal-auth { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 15, 25, 0.95); z-index: 99998; justify-content: center; align-items: center; padding: 20px; }
@@ -77,18 +83,12 @@
         .form-group label { font-size: 13px; color: #94a3b8; font-weight: 600; }
         .form-input { background: #1e293b; border: 1px solid #334155; border-radius: 6px; padding: 10px; color: #fff; font-size: 14px; width: 100%; }
         
-        /* 🛠️ CONTROLES DA MANUTENÇÃO PERSONALIZADA */
-        .painel-manutencao-box { background: rgba(239, 68, 68, 0.1); border: 1px dashed #ef4444; border-radius: 8px; padding: 12px; margin-top: 15px; }
-        .m-adm-title { font-size: 13px; font-weight: bold; color: #ef4444; margin-bottom: 8px; }
-        .manutencao-inputs-row { display: flex; gap: 8px; }
-        .btn-manutencao-acao { background: #ef4444; color: #fff; border: none; padding: 10px; border-radius: 6px; font-size: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; width: 100%; margin-top: 10px; }
-        .btn-manutencao-acao.desativar { background: #22c55e; }
-
-        .container-lista-links { background: #0b0f19; border: 1px dashed #334155; padding: 12px; border-radius: 8px; display: flex; flex-direction: column; gap: 10px; margin-top: 5px; }
-        .item-link-adicionado { display: flex; gap: 6px; align-items: center; background: #1e293b; padding: 6px; border-radius: 6px; }
-        .item-link-adicionado input { flex: 1; font-size: 12px; padding: 6px; }
-        .btn-remover-linha { background: #ef4444; color: #fff; border: none; padding: 6px 10px; font-size: 11px; font-weight: bold; border-radius: 4px; cursor: pointer; }
-        .btn-adicionar-mais-links { background: #22c55e; color: #fff; border: none; padding: 8px; border-radius: 5px; font-size: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-top: 5px; text-align: center; }
+        .container-lista-links { background: #0b0f19; border: 1px dashed #334155; padding: 12px; border-radius: 8px; display: flex; flex-direction: column; gap: 14px; margin-top: 5px; }
+        .item-link-adicionado { background: #1e293b; padding: 10px; border-radius: 8px; border: 1px solid #334155; display: flex; flex-direction: column; gap: 6px; position: relative; }
+        .header-item-sinal { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: bold; color: #eab308; }
+        
+        .btn-remover-linha { background: #ef4444; color: #fff; border: none; padding: 3px 8px; font-size: 11px; font-weight: bold; border-radius: 4px; cursor: pointer; }
+        .btn-adicionar-mais-links { background: #22c55e; color: #fff; border: none; padding: 10px; border-radius: 5px; font-size: 12px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-top: 5px; text-align: center; }
 
         .painel-acoes-row { display: flex; gap: 10px; margin-top: 20px; }
         .btn-publicar { flex: 1; background: #eab308; color: #000; border: none; padding: 12px; border-radius: 6px; font-size: 13px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
@@ -110,16 +110,12 @@
     <div class="video-wrapper" id="videoWrapperArea">
         <div class="player-watermark">🏟️ ARENA PLAY</div>
         
-        <button class="btn-expandir-tela" id="btnFullscreenCustom" onclick="alternarTelaCheiaReprodutor()">📺 Expandir Tela</button>
-        
-        <div class="maintenance-overlay" id="telaManutencaoFronte">
-            <div class="m-title">🛠️ Sistema em Manutenção</div>
-            <div class="m-desc">Aguarde, estamos em manutenção do nosso sistema. Retornaremos em breve!</div>
-            <div class="m-timer" id="cronometroManutencao">00:00:00</div>
-            <div class="m-notice">Arena Play não transmite sinais próprios. Alguns links podem cair temporariamente por questão de segurança.</div>
-        </div>
+        <button class="btn-expandir-tela" id="btnFullscreenCustom" style="display: none;" onclick="alternarTelaCheiaReprodutor()">
+            <span class="txt-btn">📺 Expandir Tela</span>
+            <div class="icon-fullscreen"></div>
+        </button>
 
-        <div id="playerContainer" style="width:100%; height:100%;">
+        <div id="playerContainer" style="width:100%; height:100%; position: relative;">
             <video id="arenaVideoPlayer" class="meu-player-nativo" autoplay playsinline></video>
         </div>
     </div>
@@ -127,7 +123,7 @@
     <div class="evento-info">
         <div class="confronto-container">
             <div class="evento-titulo" id="txtConfronto">Carregando transmissão ao vivo...</div>
-            <button class="btn-recarregar-sinal" onclick="recarregarSinalAtual()">🔄 Atualizar</button>
+            <button class="btn-atualizar-sinal" id="btnAtualizarSinal" onclick="recarregarSinalAtual()">🔄 ATUALIZAR SINAL</button>
         </div>
         <div id="areaBotoesOpcoesAdicionais" class="opcoes-sinais-grid"></div>
     </div>
@@ -142,12 +138,11 @@
     </div>
 
     <div class="legal-footer">
-        © Arena Play 2026 · Este site não aloja nem transmite sinais próprios. Caso o player trave, use o botão ao lado do nome do jogo para "Atualizar" ou mude a opção de sinal.
+        © Arena Play 2026 · Este site não aloja nem transmite sinais próprios. Se travar, clique em "Atualizar Sinal" ou troque de canal.
     </div>
 
     <div class="modal-auth" id="janelaAutenticacao">
         <div class="auth-content">
-            <div class="painel-title" style="font-size: 16px; margin-bottom: 12px;">Chave de Acesso</div>
             <input type="password" id="inputSenhaAcesso" class="form-input" placeholder="Digite a senha administrativa" style="text-align: center; margin-bottom: 15px;">
             <button class="btn-publicar" onclick="validarSenhaPainel()">Entrar no Painel</button>
             <button class="btn-fechar-painel" onclick="fecharModalChave()">Cancelar</button>
@@ -164,22 +159,9 @@
             </div>
             
             <div class="form-group">
-                <label>Canais / Links de Sinais Disponíveis:</label>
+                <label>Configurar Canais de Transmissão:</label>
                 <div id="listaInputsCanais" class="container-lista-links"></div>
-                <button type="button" class="btn-adicionar-mais-links" onclick="criarNovaLinhaDeLink('')">➕ Adicionar Opção de Sinal</button>
-            </div>
-
-            <div class="painel-manutencao-box">
-                <div class="m-adm-title">🛠️ Controle de Manutenção Customizada</div>
-                <div class="manutencao-inputs-row">
-                    <input type="number" id="inputValorTempoManutencao" class="form-input" placeholder="Ex: 10, 30, 45" value="10" style="flex: 1;">
-                    <select id="selectUnidadeTempoManutencao" class="form-input" style="flex: 1;">
-                        <option value="segundos" selected>Segundos</option>
-                        <option value="minutos">Minutos</option>
-                        <option value="horas">Horas</option>
-                    </select>
-                </div>
-                <button type="button" id="btnTriggerManutencao" class="btn-manutencao-acao" onclick="alternarEstadoManutencaoFirebase()">Ativar Modo Manutenção</button>
+                <button type="button" class="btn-adicionar-mais-links" onclick="criarNovaLinhaDeLink('', '')">➕ Adicionar Novo Sinal</button>
             </div>
             
             <div class="painel-acoes-row">
@@ -209,11 +191,9 @@
         firebase.initializeApp(firebaseConfig);
         const dbRef = firebase.database().ref("transmissao_stories");
 
-        let arrayLinksSinais = [];
-        let linkSinalEmExecucao = "";
+        let dadosSinaisGlobais = [];
+        let indexSinalAtivo = 0;
         let hlsInstancia = null;
-        let loopCronometroInterval = null;
-        let sistemaEmManutencaoAtiva = false;
 
         const frasesInformativas = [
             "<strong>Você sabia?</strong> O Arena Play nasceu com o objetivo de trazer o futebol premium de forma 100% gratuita para a galera. Quem tem o app não precisa de assinatura cara!",
@@ -235,60 +215,47 @@
         setInterval(rotacionarFrases, 7000);
         rotacionarFrases();
 
-        // ESCUTA EM TEMPO REAL CORRIGIDA DO FIREBASE
+        // INSTANTÂNEO EM TEMPO REAL COM SUPORTE MULTI-SINAL
         dbRef.on("value", (snapshot) => {
             const dados = snapshot.val();
             if (dados) {
                 document.getElementById('txtConfronto').innerText = dados.nomeEvento || "Nenhum evento ativo";
                 
-                if (dados.linksLista) {
-                    arrayLinksSinais = dados.linksLista.filter(l => l && l.trim() !== "");
-                } else if (dados.linkPrincipal) {
-                    arrayLinksSinais = [dados.linkPrincipal];
+                if (dados.sinaisConfig) {
+                    dadosSinaisGlobais = dados.sinaisConfig;
+                } else if (dados.linksLista) {
+                    dadosSinaisGlobais = dados.linksLista.map(link => ({ videoUrl: link, manutencaoUrl: "" }));
                 } else {
-                    arrayLinksSinais = [];
+                    dadosSinaisGlobais = [];
                 }
 
-                // MONITOR DE MANUTENÇÃO DINÂMICA
-                const timestampAtual = Date.now();
-                if (dados.manutencaoAte && timestampAtual < dados.manutencaoAte) {
-                    sistemaEmManutencaoAtiva = true;
-                    ativarInterfaceManutencaoUsuario(dados.manutencaoAte);
+                if (dadosSinaisGlobais.length > 0) {
+                    if (indexSinalAtivo >= dadosSinaisGlobais.length) indexSinalAtivo = 0;
+                    executarSinalSelecionado(indexSinalAtivo);
                 } else {
-                    sistemaEmManutencaoAtiva = false;
-                    desativarInterfaceManutencaoUsuario();
-                    
-                    // Só renderiza se os sinais mudarem ou se o player estiver totalmente vazio
-                    if (arrayLinksSinais.length > 0 && (linkSinalEmExecucao === "" || !arrayLinksSinais.includes(linkSinalEmExecucao))) {
-                        renderizarVideo(arrayLinksSinais[0], 0);
-                    } else {
-                        gerarBotoesDeSinalFlutuantes();
-                    }
+                    document.getElementById('playerContainer').innerHTML = "<div style='color:#64748b; padding:20px; text-align:center;'>Nenhum canal configurado.</div>";
+                    document.getElementById('areaBotoesOpcoesAdicionais').innerHTML = "";
                 }
-                atualizarBotaoPainelAdministrativo();
             }
         });
 
         function gerarBotoesDeSinalFlutuantes() {
             const containerAbas = document.getElementById('areaBotoesOpcoesAdicionais');
             containerAbas.innerHTML = "";
-            if (arrayLinksSinais.length > 1 && !sistemaEmManutencaoAtiva) {
-                for (let i = 0; i < arrayLinksSinais.length; i++) {
+
+            if (dadosSinaisGlobais.length > 1) {
+                for (let i = 0; i < dadosSinaisGlobais.length; i++) {
                     const btnOpcao = document.createElement('button');
                     btnOpcao.className = "btn-opcao-dinamica";
-                    btnOpcao.id = `btn-sinal-${i}`;
                     btnOpcao.innerText = `Sinal ${i + 1}`;
                     
-                    if (linkSinalEmExecucao === arrayLinksSinais[i]) {
+                    if (indexSinalAtivo === i) {
                         btnOpcao.classList.add("ativo");
                     }
                     
-                    // Função de clique totalmente independente e protegida
-                    btnOpcao.onclick = (function(urlSinal, index) {
-                        return function() {
-                            renderizarVideo(urlSinal, index);
-                        };
-                    })(arrayLinksSinais[i], i);
+                    btnOpcao.onclick = (function(index) {
+                        return function() { executarSinalSelecionado(index); };
+                    })(i);
                     
                     containerAbas.appendChild(btnOpcao);
                 }
@@ -296,44 +263,78 @@
         }
 
         function recarregarSinalAtual() {
-            if (linkSinalEmExecucao && !sistemaEmManutencaoAtiva) {
-                const indexAtual = arrayLinksSinais.indexOf(linkSinalEmExecucao);
-                renderizarVideo(linkSinalEmExecucao, indexAtual >= 0 ? indexAtual : 0);
+            if (dadosSinaisGlobais.length > 0) {
+                executarSinalSelecionado(indexSinalAtivo);
             }
         }
 
-        function ativarInterfaceManutencaoUsuario(fimTimestamp) {
-            document.getElementById('telaManutencaoFronte').style.display = "flex";
-            document.getElementById('btnFullscreenCustom').style.display = "none";
-            document.getElementById('areaBotoesOpcoesAdicionais').innerHTML = "";
+        // NOVO MOTOR TEXTUAL AUTOMÁTICO - RECONHECE O SEU TEXTO INDEPENDENTE DE LINKS
+        function executarSinalSelecionado(index) {
+            indexSinalAtivo = index;
+            const sinal = dadosSinaisGlobais[index];
+            
+            const container = document.getElementById('playerContainer');
+            const btnExpandir = document.getElementById('btnFullscreenCustom');
             
             if (hlsInstancia) { hlsInstancia.destroy(); hlsInstancia = null; }
-            document.getElementById('playerContainer').innerHTML = "";
-            linkSinalEmExecucao = "";
 
-            clearInterval(loopCronometroInterval);
-            loopCronometroInterval = setInterval(() => {
-                const agora = Date.now();
-                const restante = fimTimestamp - agora;
+            // Condição Inteligente: Se NÃO for link m3u8 ou youtube, vira automaticamente um texto de aviso profissional
+            let urlTestar = (sinal.videoUrl || "").toLowerCase().trim();
+            let textoManutencaoCustom = sinal.manutencaoUrl || "";
 
-                if (restante <= 0) {
-                    clearInterval(loopCronometroInterval);
-                    dbRef.child("manutencaoAte").set(0);
+            // Se o usuário preencheu o campo de texto customizado ou escreveu uma frase direta no campo principal
+            if (textoManutencaoCustom.trim() !== "" || (urlTestar !== "" && !urlTestar.includes("http") && !urlTestar.includes(".m3u8") && !urlTestar.includes("youtube") && !urlTestar.includes("youtu.be"))) {
+                btnExpandir.style.display = "none";
+                
+                // Define a mensagem final baseado em onde foi digitado
+                let mensagemFinal = textoManutencaoCustom.trim() !== "" ? textoManutencaoCustom : sinal.videoUrl;
+
+                container.innerHTML = `
+                    <div class="canvas-manutencao-interna" style="display: flex;">
+                        <div class="c-m-aviso">⚠️ AVISO SISTEMA</div>
+                        <div class="c-m-titulo">${mensagemFinal.toUpperCase()}</div>
+                        <div class="c-m-logo-footer">🏟️ ARENA PLAY</div>
+                    </div>
+                `;
+            } 
+            // Caso seja Link do YouTube
+            else if (sinal.videoUrl && (sinal.videoUrl.includes("youtube.com") || sinal.videoUrl.includes("youtu.be"))) {
+                btnExpandir.style.display = "none";
+                let videoId = "";
+                if (sinal.videoUrl.includes("youtu.be/")) videoId = sinal.videoUrl.split("youtu.be/")[1].split("?")[0];
+                else if (sinal.videoUrl.includes("v=")) videoId = sinal.videoUrl.split("v=")[1].split("&")[0];
+                else if (sinal.videoUrl.includes("embed/")) videoId = sinal.videoUrl.split("embed/")[1].split("?")[0];
+
+                const embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&controls=1&modestbranding=1&autoplay=1`;
+                container.innerHTML = `<iframe src="${embedUrl}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+            } 
+            // Caso seja Streaming M3U8 normal HLS
+            else if (sinal.videoUrl && sinal.videoUrl.trim() !== "") {
+                btnExpandir.style.display = "flex";
+                container.innerHTML = `<video id="arenaVideoPlayer" class="meu-player-nativo" autoplay playsinline></video>`;
+                const videoElement = document.getElementById('arenaVideoPlayer');
+
+                if (Hls.isSupported() && (sinal.videoUrl.includes(".m3u8") || !videoElement.canPlayType('application/vnd.apple.mpegurl'))) {
+                    hlsInstancia = new Hls({ 
+                        maxMaxBufferLength: 30, 
+                        enableWorker: true,
+                        lowLatencyMode: true,
+                        backBufferLength: 0
+                    });
+                    hlsInstancia.loadSource(sinal.videoUrl);
+                    hlsInstancia.attachMedia(videoElement);
+                    hlsInstancia.on(Hls.Events.MANIFEST_PARSED, function() { videoElement.play().catch(() => {}); });
                 } else {
-                    const totalSegundos = Math.floor(restante / 1000);
-                    const horas = Math.floor(totalSegundos / 3600);
-                    const minutos = Math.floor((totalSegundos % 3600) / 60);
-                    const segundos = totalSegundos % 60;
-                    
-                    document.getElementById('cronometroManutencao').innerText = 
-                        `${horas.toString().padStart(2,'0')}:${minutos.toString().padStart(2,'0')}:${segundos.toString().padStart(2,'0')}`;
+                    videoElement.src = sinal.videoUrl;
+                    videoElement.load();
+                    videoElement.play().catch(() => {});
                 }
-            }, 1000);
-        }
+            } else {
+                btnExpandir.style.display = "none";
+                container.innerHTML = "<div style='color:#64748b; font-size:13px; text-align:center; padding:20px;'>Canal indisponível.</div>";
+            }
 
-        function desativarInterfaceManutencaoUsuario() {
-            document.getElementById('telaManutencaoFronte').style.display = "none";
-            clearInterval(loopCronometroInterval);
+            gerarBotoesDeSinalFlutuantes();
         }
 
         function alternarTelaCheiaReprodutor() {
@@ -356,102 +357,23 @@
             }
         }
 
-        function renderizarVideo(url, indexSinal) {
-            if (sistemaEmManutencaoAtiva) return;
-            linkSinalEmExecucao = url;
-            
-            const container = document.getElementById('playerContainer');
-            const btnExpandir = document.getElementById('btnFullscreenCustom');
-            
-            if (hlsInstancia) { hlsInstancia.destroy(); hlsInstancia = null; }
-
-            if (url.includes("youtube.com") || url.includes("youtu.be")) {
-                btnExpandir.style.display = "none";
-                let videoId = "";
-                if (url.includes("youtu.be/")) videoId = url.split("youtu.be/")[1].split("?")[0];
-                else if (url.includes("v=")) videoId = url.split("v=")[1].split("&")[0];
-                else if (url.includes("embed/")) videoId = url.split("embed/")[1].split("?")[0];
-
-                const embedUrl = `https://www.youtube.com/embed/${videoId}?rel=0&controls=1&modestbranding=1&autoplay=1`;
-                container.innerHTML = `<iframe src="${embedUrl}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-            } 
-            else {
-                btnExpandir.style.display = "flex";
-                container.innerHTML = `<video id="arenaVideoPlayer" class="meu-player-nativo" autoplay playsinline></video>`;
-                const videoElement = document.getElementById('arenaVideoPlayer');
-
-                if (Hls.isSupported() && (url.includes(".m3u8") || !videoElement.canPlayType('application/vnd.apple.mpegurl'))) {
-                    hlsInstancia = new Hls({ maxMaxBufferLength: 10, enableWorker: true });
-                    hlsInstancia.loadSource(url);
-                    hlsInstancia.attachMedia(videoElement);
-                    hlsInstancia.on(Hls.Events.MANIFEST_PARSED, function() { videoElement.play().catch(() => {}); });
-                } else {
-                    videoElement.src = url;
-                    videoElement.load();
-                    videoElement.play().catch(() => {});
-                }
-            }
-            gerarBotoesDeSinalFlutuantes();
-        }
-
-        // ALTERNAR ESTADO DE MANUTENÇÃO DINÂMICO
-        function alternarEstadoManutencaoFirebase() {
-            if (!sistemaEmManutencaoAtiva) {
-                const valorDigitado = parseInt(document.getElementById('inputValorTempoManutencao').value);
-                const unidade = document.getElementById('selectUnidadeTempoManutencao').value;
-                
-                if (isNaN(valorDigitado) || valorDigitado <= 0) {
-                    return alert("Insira um tempo válido maior que zero!");
-                }
-
-                let multiplicadorMs = 1000; // Segundos por padrão
-                if (unidade === "minutos") multiplicadorMs = 60 * 1000;
-                else if (unidade === "horas") multiplicadorMs = 60 * 60 * 1000;
-
-                const alvoTimestamp = Date.now() + (valorDigitado * multiplicadorMs);
-                
-                dbRef.child("manutencaoAte").set(alvoTimestamp).then(() => {
-                    alert(`Modo Manutenção ligado por ${valorDigitado} ${unidade}!`);
-                });
-            } else {
-                dbRef.child("manutencaoAte").set(0).then(() => {
-                    alert("Modo Manutenção desligado com sucesso!");
-                });
-            }
-        }
-
-        function atualizarBotaoPainelAdministrativo() {
-            const btn = document.getElementById('btnTriggerManutencao');
-            if (btn) {
-                if (sistemaEmManutencaoAtiva) {
-                    btn.innerText = "🔴 Desativar Manutenção Agora";
-                    btn.className = "btn-manutencao-acao desativar";
-                } else {
-                    btn.innerText = "🛠️ Ativar Modo Manutenção";
-                    btn.className = "btn-manutencao-acao";
-                }
-            }
-        }
-
-        function criarNovaLinhaDeLink(valorLink = "") {
+        // ENTRADAS DINÂMICAS DO NOVO COMPORTAMENTO ADM
+        function criarNovaLinhaDeLink(valorVideo = "", valorManutencao = "") {
             const containerInputs = document.getElementById('listaInputsCanais');
+            const totalItens = containerInputs.children.length + 1;
+
             const divItem = document.createElement('div');
             divItem.className = "item-link-adicionado";
             
-            const inputLink = document.createElement('input');
-            inputLink.type = "text";
-            inputLink.className = "form-input campo-link-dinamico";
-            inputLink.placeholder = "Cole a URL do sinal (.m3u8, .mp4 ou YouTube)";
-            inputLink.value = valorLink;
+            divItem.innerHTML = `
+                <div class="header-item-sinal">
+                    <span>OPÇÃO DE SINAL ${totalItens}</span>
+                    <button type="button" class="btn-remover-linha" onclick="this.parentElement.parentElement.remove()">Remover</button>
+                </div>
+                <input type="text" class="form-input campo-video-url" placeholder="Link do Streaming (.m3u8, YouTube ou Frase Direta)" value="${valorVideo}">
+                <input type="text" class="form-input campo-manutencao-url" placeholder="OU digite a frase de manutenção aqui se o campo acima tiver link" value="${valorManutencao}">
+            `;
             
-            const btnRemover = document.createElement('button');
-            btnRemover.type = "button";
-            btnRemover.className = "btn-remover-linha";
-            btnRemover.innerText = "X";
-            btnRemover.onclick = function() { divItem.remove(); };
-            
-            divItem.appendChild(inputLink);
-            divItem.appendChild(btnRemover);
             containerInputs.appendChild(divItem);
         }
 
@@ -472,10 +394,14 @@
                     const dados = snapshot.val();
                     if(dados) {
                         document.getElementById('inputNomeEvento').value = dados.nomeEvento || "";
-                        if(dados.linksLista && dados.linksLista.length > 0) {
-                            dados.linksLista.forEach(link => { if(link) criarNovaLinhaDeLink(link); });
+                        if(dados.sinaisConfig && dados.sinaisConfig.length > 0) {
+                            dados.sinaisConfig.forEach(sinal => {
+                                criarNovaLinhaDeLink(sinal.videoUrl || "", sinal.manutencaoUrl || "");
+                            });
+                        } else if(dados.linksLista) {
+                            dados.linksLista.forEach(link => { if(link) criarNovaLinhaDeLink(link, ""); });
                         } else {
-                            criarNovaLinhaDeLink(dados.linkPrincipal || "");
+                            criarNovaLinhaDeLink("", "");
                         }
                     }
                 });
@@ -489,23 +415,31 @@
 
         function salvarNoFirebaseMultiLinks() {
             const nome = document.getElementById('inputNomeEvento').value.trim();
-            const inputsClube = document.getElementsByClassName('campo-link-dinamico');
-            
-            let listaLinksFormatados = [];
-            for (let i = 0; i < inputsClube.length; i++) {
-                let urlLimpa = inputsClube[i].value.trim();
-                if(urlLimpa !== "") listaLinksFormatados.push(urlLimpa);
+            const blocosSinais = document.getElementsByClassName('item-link-adicionado');
+            let listaSinaisFormatados = [];
+
+            for (let i = 0; i < blocosSinais.length; i++) {
+                let vUrl = blocosSinais[i].querySelector('.campo-video-url').value.trim();
+                let mUrl = blocosSinais[i].querySelector('.campo-manutencao-url').value.trim();
+                
+                if (vUrl !== "" || mUrl !== "") {
+                    listaSinaisFormatados.push({ videoUrl: vUrl, manutencaoUrl: mUrl });
+                }
             }
 
             if (!nome) return alert("Insira o nome do evento!");
-            if (listaLinksFormatados.length === 0) return alert("Insira pelo menos um link!");
+            if (listaSinaisFormatados.length === 0) return alert("Configure ao menos uma opção de canal!");
 
             dbRef.child("nomeEvento").set(nome);
-            dbRef.child("linkPrincipal").set(listaLinksFormatados[0]);
-            dbRef.child("linksLista").set(listaLinksFormatados).then(() => {
-                alert("Dados salvos e sincronizados!");
-                fecharPainelStories();
-            });
+            dbRef.child("sinaisConfig").set(listaSinaisFormatados);
+            
+            // Retrocompatibilidade para evitar travamentos
+            dbRef.child("linkPrincipal").set(listaSinaisFormatados[0].videoUrl || "");
+            dbRef.child("linksLista").set(listaSinaisFormatados.map(s => s.videoUrl));
+            dbRef.child("manutencaoAte").set(0);
+
+            alert("Publicado com Sucesso!");
+            fecharPainelStories();
         }
 
         function copiarLinkDaPagina() {
