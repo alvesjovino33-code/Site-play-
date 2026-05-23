@@ -23,8 +23,9 @@
         
         iframe { width: 100%; height: 100%; border: none; display: block; }
         .meu-player-nativo { width: 100%; height: 100%; background: #000; display: block; outline: none; }
-        
-        /* Oculta controles de tempo nativos no ao vivo */
+
+        /* 🚫 BLINDAGEM DA BARRA APENAS NO MODO AO VIVO */
+        video::-webkit-media-controls-fullscreen-button { display: none !important; }
         .modo-aovivo::-webkit-media-controls-timeline,
         .modo-aovivo::-webkit-media-controls-current-time-display,
         .modo-aovivo::-webkit-media-controls-time-remaining-display { display: none !important; }
@@ -33,24 +34,17 @@
         .player-watermark-right { position: absolute; top: 12px; right: 12px; background: rgba(0, 0, 0, 0.6); color: #fff; padding: 4px 10px; font-size: 11px; font-weight: 800; letter-spacing: 0.5px; border-radius: 4px; pointer-events: none; z-index: 15; text-transform: uppercase; }
         .player-watermark-right span { color: #facc15; }
 
-        /* 📱 BOTÃO DE EXPANDIR TRADICIONAL (TELA EM PÉ) */
+        /* 📱 BOTÃO DE EXPANDIR TRADICIONAL (QUADRADO DO LAYOUT) */
         .btn-expandir-tela { position: absolute; bottom: 12px; right: 12px; background: #facc15; color: #000; border: none; padding: 8px 14px; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer; z-index: 20; text-transform: uppercase; display: flex; align-items: center; gap: 4px; }
 
-        /* 🔄 BOTÃO DE EXPANDIR FLUTUANTE EXCLUSIVO PARA TELA DEITADA */
+        /* 🔄 BOTÃO DE EXPANDIR EXCLUSIVO PARA TELA DEITADA */
         .btn-fullscreen-deitado { display: none; position: absolute; bottom: 15px; right: 15px; width: 42px; height: 42px; background: rgba(0, 0, 0, 0.7); border: 2px solid #ffffff; border-radius: 8px; z-index: 9999; cursor: pointer; align-items: center; justify-content: center; padding: 8px; }
         .btn-fullscreen-deitado svg { width: 100%; height: 100%; fill: #ffffff; }
 
-        /* Aplicando exibição do botão flutuante apenas em Fullscreen/Tela Deitada */
         .video-wrapper:fullscreen .btn-expandir-tela { display: none !important; }
         .video-wrapper:fullscreen .btn-fullscreen-deitado { display: flex !important; }
         .video-wrapper:-webkit-full-screen .btn-expandir-tela { display: none !important; }
         .video-wrapper:-webkit-full-screen .btn-fullscreen-deitado { display: flex !important; }
-
-        /* 🕹️ TOQUE EM ÁREAS ADICIONAIS */
-        .touch-area-esquerda, .touch-area-direita { position: absolute; top: 0; width: 25%; height: 80%; z-index: 6; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; }
-        .touch-area-esquerda { left: 0; }
-        .touch-area-direita { right: 0; }
-        .touch-feedback { background: rgba(0,0,0,0.8); color: #fff; padding: 6px 12px; font-size: 11px; font-weight: bold; border-radius: 20px; border: 1px solid #facc15; }
 
         /* 🎛️ SELETOR DE MODO (AO VIVO VS HISTÓRICO) */
         .seletor-modo-usuario { width: 100%; max-width: 600px; background: #111827; border: 1px solid #1e293b; padding: 5px; border-radius: 10px; display: flex; gap: 6px; margin-top: 14px; }
@@ -77,7 +71,7 @@
         /* 📑 FOOTER */
         .legal-footer { width: 100%; max-width: 600px; margin-top: 30px; padding-top: 15px; text-align: center; border-top: 1px solid #1e293b; color: #475569; font-size: 11px; line-height: 1.4; }
 
-        /* 🔒 MODALS */
+        /* 🔒 MODALS ADMIN */
         .modal-auth { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 21, 30, 0.96); z-index: 99998; justify-content: center; align-items: center; padding: 20px; }
         .modal-painel { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 21, 30, 0.98); z-index: 99999; justify-content: center; align-items: center; padding: 20px; }
         .painel-content { width: 100%; max-width: 500px; background: #111827; border: 1px solid #1e293b; border-radius: 12px; padding: 20px; max-height: 90vh; overflow-y: auto; }
@@ -116,9 +110,6 @@
                 <path d="M5 5h5v2H7v3H5V5zm14 0h-5v2h3v3h2V5zM5 19h5v-2H7v-3H5v5zm14 0h-5v-2h3v-3h2v5z"/>
             </svg>
         </button>
-
-        <div class="touch-area-esquerda" ondblclick="mecanicaVoltarTempo()"><div class="touch-feedback" id="feedEsq">⏪ -5s</div></div>
-        <div class="touch-area-direita" ondblclick="mecanicaAvancarTempo()"><div class="touch-feedback" id="feedDir">⏩ +5s</div></div>
 
         <div id="playerContainer" style="width:100%; height:100%; position: relative;">
             <video id="arenaVideoPlayer" class="meu-player-nativo modo-aovivo" autoplay playsinline controls></video>
@@ -192,10 +183,8 @@
         let modoAtualEstrutura = "aovivo";
         let indexSinalAtivo = 0;
         let hlsInstancia = null;
-        let jaAvancouUmaVez = false;
         let abaAtivaPainel = "aovivo";
 
-        // Escuta em tempo real os canais independentes do Firebase
         database.ref("arena_canais_separados").on("value", (snapshot) => {
             const dados = snapshot.val();
             if (dados) {
@@ -205,14 +194,13 @@
                 sinaisHistorico = dados.historico ? dados.historico.sinaisConfig || [] : [];
                 tituloHistorico = dados.historico ? dados.historico.nomeEvento || "Nenhuma reprise configurada" : "Nenhuma reprise configurada";
                 
-                // Renderiza o modo correspondente ativo em tela
                 carregarModoNoPlayer();
             }
         });
 
         function alterarModoPeloUsuario(novoModo) {
             modoAtualEstrutura = novoModo;
-            indexSinalAtivo = 0; // Reseta canal para a primeira opção do novo modo escolhido
+            indexSinalAtivo = 0;
             document.getElementById('userModoAoVivo').className = `btn-modo-user ${novoModo === 'aovivo' ? 'ativo' : ''}`;
             document.getElementById('userModoHistorico').className = `btn-modo-user ${novoModo === 'historico' ? 'ativo' : ''}`;
             carregarModoNoPlayer();
@@ -244,7 +232,6 @@
             const btnExpandir = document.getElementById('btnFullscreenCustom');
             
             if (hlsInstancia) { hlsInstancia.destroy(); hlsInstancia = null; }
-            jaAvancouUmaVez = false; 
 
             let urlTestar = (sinal.videoUrl || "").toLowerCase().trim();
             let textoManutencaoCustom = sinal.manutencaoUrl || "";
@@ -270,17 +257,20 @@
             else if (sinal.videoUrl && sinal.videoUrl.trim() !== "") {
                 btnExpandir.style.display = "flex";
                 
-                let classeModo = modoAtualEstrutura === "aovivo" ? "meu-player-nativo modo-aovivo" : "meu-player-nativo";
-                container.innerHTML = `<video id="arenaVideoPlayer" class="${classeModo}" autoplay playsinline controls></video>`;
+                // MODO AO VIVO: Carrega com a classe "modo-aovivo" para ocultar a barra de tempo
+                // MODO HISTÓRICO: Carrega 100% nativo com todos os controles visíveis normais!
+                if (modoAtualEstrutura === "aovivo") {
+                    container.innerHTML = `<video id="arenaVideoPlayer" class="meu-player-nativo modo-aovivo" autoplay playsinline controls></video>`;
+                } else {
+                    container.innerHTML = `<video id="arenaVideoPlayer" class="meu-player-nativo" autoplay playsinline controls></video>`;
+                }
                 
                 const videoElement = document.getElementById('arenaVideoPlayer');
-
-                // Áudio 100% Ativo no Máximo Diretamente
                 videoElement.muted = false;
                 videoElement.volume = 1.0;
 
                 if (modoAtualEstrutura === "historico") {
-                    let nomeIdentificador = modoAtualEstrutura === "aovivo" ? tituloAoVivo : tituloHistorico;
+                    let nomeIdentificador = tituloHistorico;
                     const tempoSalvo = localStorage.getItem("arena_play_time_" + nomeIdentificador);
                     if (tempoSalvo) {
                         videoElement.addEventListener('loadedmetadata', function() {
@@ -306,41 +296,6 @@
                 }
             }
             gerarBotoesDeSinalFlutuantes();
-        }
-
-        function mecanicaVoltarTempo() {
-            const video = document.getElementById('arenaVideoPlayer');
-            if (video) {
-                video.currentTime = Math.max(0, video.currentTime - 5);
-                mostrarFeedbackVisual('feedEsq');
-            }
-        }
-
-        function mecanicaAvancarTempo() {
-            const video = document.getElementById('arenaVideoPlayer');
-            if (video) {
-                if (modoAtualEstrutura === "aovivo") {
-                    if (!jaAvancouUmaVez) {
-                        video.currentTime = video.currentTime + 5;
-                        jaAvancouUmaVez = true;
-                        mostrarFeedbackVisual('feedDir');
-                    } else {
-                        let avisoBloqueio = document.getElementById('feedDir');
-                        avisoBloqueio.innerText = "❌ Trava Ao Vivo";
-                        mostrarFeedbackVisual('feedDir');
-                        setTimeout(() => { avisoBloqueio.innerText = "⏩ +5s"; }, 1000);
-                    }
-                } else {
-                    video.currentTime = video.currentTime + 5;
-                    mostrarFeedbackVisual('feedDir');
-                }
-            }
-        }
-
-        function mostrarFeedbackVisual(id) {
-            const el = document.getElementById(id).parentElement;
-            el.style.opacity = "1";
-            setTimeout(() => { el.style.opacity = "0"; }, 500);
         }
 
         function gerarBotoesDeSinalFlutuantes() {
@@ -374,12 +329,10 @@
             }
         }
 
-        /* 🔒 SISTEMA ISOLADO DO PAINEL GERENCIADOR */
         function mudarAbaPainel(aba) {
             abaAtivaPainel = aba;
             document.getElementById('abaAoVivoBtn').className = `aba-btn ${aba === 'aovivo' ? 'ativa' : ''}`;
             document.getElementById('abaHistoricoBtn').className = `aba-btn ${aba === 'historico' ? 'ativa' : ''}`;
-            
             const containerCorpo = document.getElementById('corpoPainelGerenciador');
             
             if (aba === 'aovivo') {
@@ -406,7 +359,6 @@
                     </div>`;
             }
 
-            // Puxa as informações de forma independente do nó correspondente
             database.ref("arena_canais_separados/" + (aba === "aovivo" ? "aoVivo" : "historico")).once("value").then((snapshot) => {
                 const dados = snapshot.val();
                 if(dados) {
@@ -435,7 +387,6 @@
         }
 
         function abrirModalChave() { document.getElementById('janelaAutenticacao').style.display = "flex"; }
-        // Senha configurada como requisitado anteriormente
         function validarSenhaPainel() {
             if (document.getElementById('inputSenhaAcesso').value === "YAGO22") {
                 document.getElementById('janelaAutenticacao').style.display = "none";
@@ -463,7 +414,6 @@
             }
 
             if (!nome) return alert("Defina um título para este modo!");
-
             let noSalvar = abaAtivaPainel === "aovivo" ? "aoVivo" : "historico";
             
             database.ref("arena_canais_separados/" + noSalvar).set({
@@ -474,6 +424,25 @@
                 fecharPainelStories();
             });
         }
+
+        const frasesInformativas = [
+            "<strong>Dica Arena:</strong> Se o sinal travar ou congelar, basta clicar no botão amarelo <strong>'Atualizar Sinal'</strong> para sincronizar instantaneamente!",
+            "<strong>Nova Função:</strong> Alterne entre o modo Ao Vivo e Futebol Histórico para conferir nossa programação completa!"
+        ];
+        let fraseIndexAtual = 0;
+        function rotacionarFrases() {
+            const caixa = document.getElementById('tickerBox');
+            if (caixa) {
+                caixa.style.opacity = 0;
+                setTimeout(() => {
+                    caixa.innerHTML = frasesInformativas[fraseIndexAtual];
+                    caixa.style.opacity = 1;
+                    fraseIndexAtual = (fraseIndexAtual + 1) % frasesInformativas.length;
+                }, 400);
+            }
+        }
+        setInterval(rotacionarFrases, 7000);
+        rotacionarFrases();
     </script>
 </body>
 </html>
