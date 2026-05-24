@@ -24,12 +24,9 @@
         iframe { width: 100%; height: 100%; border: none; display: block; }
         .meu-player-nativo { width: 100%; height: 100%; background: #000; display: block; outline: none; }
         
-        /* 🚫 SUMIR COM O BOTÃO QUADRADINHO NATIVO DO NAVEGADOR */
         video::-webkit-media-controls-fullscreen-button { display: none !important; }
         video::-internal-media-controls-fullscreen-button { display: none !important; }
         video::-webkit-media-controls-toggle-closed-captions-button { display: none !important; }
-
-        /* Oculta os controles padrão apenas no modo Ao Vivo para não bugar */
         .modo-aovivo-trava::-webkit-media-controls { display: none !important; }
         .modo-aovivo-trava::-webkit-media-controls-enclosure { display: none !important; }
 
@@ -37,43 +34,41 @@
         .player-watermark-right { position: absolute; top: 12px; right: 12px; background: rgba(0, 0, 0, 0.6); color: #fff; padding: 4px 10px; font-size: 11px; font-weight: 800; letter-spacing: 0.5px; border-radius: 4px; pointer-events: none; z-index: 15; text-transform: uppercase; }
         .player-watermark-right span { color: #facc15; }
 
-        /* 🟨 SEU BOTÃO EXPANDIR TELA OFICIAL */
+        /* 🟨 BOTÃO EXPANDIR TELA */
         .btn-expandir-oficial { position: absolute; bottom: 12px; right: 12px; background: #facc15; color: #000; border: none; padding: 8px 14px; font-size: 11px; font-weight: 800; border-radius: 20px; cursor: pointer; z-index: 30; display: flex; align-items: center; gap: 6px; text-transform: uppercase; box-shadow: 0 4px 10px rgba(0,0,0,0.4); transition: transform 0.2s; }
         .btn-expandir-oficial:active { transform: scale(0.95); }
         .btn-expandir-oficial svg { width: 14px; height: 14px; fill: #000; }
 
-        /* 🕹️ CONTROLES DE TOQUE LATERAIS (MODO HISTÓRICO) */
+        /* CONTROLES DE TOQUE */
         .touch-area-esquerda, .touch-area-direita { position: absolute; top: 0; width: 22%; height: 75%; z-index: 6; display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s; pointer-events: auto; }
         .touch-area-esquerda { left: 0; }
         .touch-area-direita { right: 0; }
         .touch-feedback { background: rgba(0,0,0,0.8); color: #fff; padding: 6px 12px; font-size: 11px; font-weight: bold; border-radius: 20px; border: 1px solid #facc15; text-align: center; }
-
-        /* Camada de Bloqueio de Toque para o Ao Vivo */
         .bloqueio-touch-aovivo { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; display: block; }
 
-        /* 🎛️ SELETOR DE MODO ALTERNADO */
+        /* SELETOR DE MODO */
         .seletor-modo-usuario { width: 100%; max-width: 600px; background: #111827; border: 1px solid #1e293b; padding: 5px; border-radius: 10px; display: flex; gap: 6px; margin-top: 14px; }
         .btn-modo-user { flex: 1; background: none; border: none; color: #64748b; padding: 11px; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer; text-transform: uppercase; transition: all 0.2s; }
         .btn-modo-user.ativo { background: #1e293b; color: #fff; border: 1px solid rgba(255,255,255,0.05); }
         .btn-modo-user.ativo span { color: #facc15; }
 
-        /* 📱 INFO DO EVENTO */
+        /* INFO DO EVENTO */
         .evento-info { width: 100%; max-width: 600px; margin-top: 14px; display: flex; flex-direction: column; align-items: center; }
-        .evento-titulo { font-size: 18px; font-weight: 700; color: #ffffff; text-align: center; margin-bottom: 12px; min-height: 24px; }
+        .evento-titulo { font-size: 18px; font-weight: 700; color: #ffffff; text-align: center; margin-bottom: 12px; min-height: 24px; padding: 0 10px; }
         
-        .btn-atualizar-sinal { background: #facc15; color: #000; border: none; padding: 10px 20px; font-size: 13px; font-weight: 700; border-radius: 25px; cursor: pointer; text-transform: uppercase; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn-atualizar-sinal { background: #facc15; color: #000; border: none; padding: 10px 20px; font-size: 13px; font-weight: 700; border-radius: 25px; cursor: pointer; text-transform: uppercase; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 5px; }
 
-        .opcoes-sinais-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%; margin-top: 15px; }
-        .btn-opcao-dinamica { border: none; padding: 10px 18px; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer; text-transform: uppercase; color: #fff; background: #1e293b; border: 1px solid #334155; }
+        .opcoes-sinais-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; width: 100%; margin-top: 15px; min-height: 40px; }
+        .btn-opcao-dinamica { border: none; padding: 10px 18px; font-size: 12px; font-weight: 700; border-radius: 6px; cursor: pointer; text-transform: uppercase; color: #fff; background: #1e293b; border: 1px solid #334155; transition: background 0.2s; }
         .btn-opcao-dinamica.ativo { background: #facc15; color: #000; border-color: #facc15; }
 
-        /* 📱 BOTÃO DOWNLOAD */
+        /* BOTÃO DOWNLOAD */
         .download-box { width: 100%; max-width: 600px; background: #111827; border: 1px solid #1e293b; border-radius: 12px; padding: 16px; margin-top: 18px; text-align: center; }
         .download-text { font-size: 13px; color: #94a3b8; margin-bottom: 12px; line-height: 1.4; }
         .download-text strong { color: #facc15; }
         .btn-download-app { display: block; width: 100%; background: #facc15; color: #000; text-decoration: none; padding: 14px; font-size: 14px; font-weight: 800; border-radius: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        /* 🔒 MODALS ADMIN */
+        /* MODALS ADMIN */
         .modal-auth { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 21, 30, 0.96); z-index: 99998; justify-content: center; align-items: center; padding: 20px; }
         .modal-painel { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(11, 21, 30, 0.98); z-index: 99999; justify-content: center; align-items: center; padding: 20px; }
         .painel-content { width: 100%; max-width: 500px; background: #111827; border: 1px solid #1e293b; border-radius: 12px; padding: 20px; max-height: 90vh; overflow-y: auto; }
@@ -213,13 +208,11 @@
             clearInterval(intervaloDicas);
             indiceDicaAtual = 0;
             const listaDicas = bancoDicas[modoAtualEstrutura];
-            
             document.getElementById('tickerBox').innerHTML = listaDicas[indiceDicaAtual];
 
             intervaloDicas = setInterval(() => {
                 const box = document.getElementById('tickerBox');
                 box.style.opacity = 0;
-                
                 setTimeout(() => {
                     indiceDicaAtual = (indiceDicaAtual + 1) % listaDicas.length;
                     box.innerHTML = listaDicas[indiceDicaAtual];
@@ -231,10 +224,10 @@
         database.ref("arena_canais_separados").on("value", (snapshot) => {
             const dados = snapshot.val();
             if (dados) {
-                sinaisAoVivo = dados.aoVivo && dados.aoVivo.sinaisConfig ? dados.aoVivo.sinaisConfig : [];
+                sinaisAoVivo = dados.aoVivo && dados.aoVivo.sinaisConfig ? dados.aoVivo.sinaisConfig.filter(e => e !== null) : [];
                 tituloAoVivo = dados.aoVivo ? dados.aoVivo.nomeEvento || "Nenhum canal ao vivo" : "Nenhum canal ao vivo";
                 
-                sinaisHistorico = dados.historico && dados.historico.sinaisConfig ? dados.historico.sinaisConfig : [];
+                sinaisHistorico = dados.historico && dados.historico.sinaisConfig ? dados.historico.sinaisConfig.filter(e => e !== null) : [];
                 tituloHistorico = dados.historico ? dados.historico.nomeEvento || "Nenhuma reprise configurada" : "Nenhuma reprise configurada";
                 
                 carregarModoNoPlayer();
@@ -267,7 +260,7 @@
 
         function interceptarToqueCentral() {
             clearInterval(intervaloDicas);
-            document.getElementById('tickerBox').innerHTML = "<strong>⚠️ Play/Pause Bloqueado:</strong> No Modo Ao Vivo a pausa está desativada para manter seu sinal 100% atualizado com o estádio!";
+            document.getElementById('tickerBox').innerHTML = "<strong>⚠️ Play/Pause Bloqueado:</strong> No Modo Ao Vivo a pausa está desativada para manter seu sinal 100% atualizado!";
             setTimeout(() => { iniciarCarrosselDicas(); }, 4000);
         }
 
@@ -275,7 +268,10 @@
             let tituloTela = modoAtualEstrutura === "aovivo" ? tituloAoVivo : tituloHistorico;
             let listaSinais = modoAtualEstrutura === "aovivo" ? sinaisAoVivo : sinaisHistorico;
 
-            document.getElementById('txtConfronto').innerText = tituloTela;
+            let tituloFormatado = tituloTela.replace(/,\s*,\s*$/, '').replace(/,\s*$/, '').trim();
+            document.getElementById('txtConfronto').innerText = tituloFormatado;
+
+            gerarBotoesDeSinalFlutuantes();
 
             if (listaSinais.length > 0) {
                 if (indexSinalAtivo >= listaSinais.length) indexSinalAtivo = 0;
@@ -284,18 +280,22 @@
                 limparInstanciasEElementosDeMidia();
                 document.getElementById('playerContainer').innerHTML = `
                     <div style="display:flex; align-items:center; justify-content:center; height:100%; font-size:14px; color:#64748b;">
-                        Nenhuma transmissão disponível neste modo.
+                        Nenhuma transmissão configurada neste modo.
                     </div>`;
-                document.getElementById('areaBotoesOpcoesAdicionais').innerHTML = "";
             }
         }
 
         function limparInstanciasEElementosDeMidia() {
-            if (hlsInstancia) { hlsInstancia.destroy(); hlsInstancia = null; }
+            if (hlsInstancia) { 
+                hlsInstancia.stopLoad();
+                hlsInstancia.detachMedia();
+                hlsInstancia.destroy(); 
+                hlsInstancia = null; 
+            }
             const videoAntigo = document.getElementById('arenaVideoPlayer');
             if (videoAntigo) {
                 videoAntigo.pause();
-                videoAntigo.src = "";
+                videoAntigo.removeAttribute('src'); 
                 videoAntigo.load();
                 videoAntigo.remove();
             }
@@ -308,13 +308,28 @@
             const container = document.getElementById('playerContainer');
             const btnExpandir = document.getElementById('btnFullscreenOficial');
             
+            // Atualiza o estado visual do botão ativo na grade imediatamente
+            const botoesGrid = document.querySelectorAll('.btn-opcao-dinamica');
+            botoesGrid.forEach((b, i) => {
+                if(i === index) b.classList.add('ativo');
+                else b.classList.remove('ativo');
+            });
+
             limparInstanciasEElementosDeMidia();
             if(!sinal) return;
 
             let urlTestar = (sinal.videoUrl || "").toLowerCase().trim();
             let textoManutencaoCustom = sinal.manutencaoUrl || "";
 
-            if (textoManutencaoCustom.trim() !== "" || (urlTestar !== "" && !urlTestar.includes("http") && !urlTestar.includes(".m3u8") && !urlTestar.includes("youtube") && !urlTestar.includes("youtu.be"))) {
+            if (urlTestar === "") {
+                btnExpandir.style.display = "none";
+                container.innerHTML = `
+                    <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; background:#111827; padding:15px; text-align:center;">
+                        <div style="font-size:12px; font-weight:bold; color:#ef4444; margin-bottom:5px;">⚠️ SINAL INDISPONÍVEL</div>
+                        <div style="font-size:14px; color:#94a3b8;">O link deste sinal não foi cadastrado no painel.</div>
+                    </div>`;
+            }
+            else if (textoManutencaoCustom.trim() !== "" || (!urlTestar.includes("http") && !urlTestar.includes(".m3u8") && !urlTestar.includes("youtube") && !urlTestar.includes("youtu.be"))) {
                 btnExpandir.style.display = "none";
                 let messageFinal = textoManutencaoCustom.trim() !== "" ? textoManutencaoCustom : sinal.videoUrl;
                 container.innerHTML = `
@@ -332,10 +347,8 @@
 
                 container.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?rel=0&controls=1&autoplay=1" allowfullscreen></iframe>`;
             } 
-            else if (sinal.videoUrl && sinal.videoUrl.trim() !== "") {
+            else {
                 btnExpandir.style.display = "flex";
-                
-                // Aplica a propriedade controlsList para forçar a remoção no mobile
                 if (modoAtualEstrutura === "historico") {
                     container.innerHTML = `<video id="arenaVideoPlayer" class="meu-player-nativo" controls controlsList="nofullscreen" autoplay playsinline></video>`;
                 } else {
@@ -343,6 +356,8 @@
                 }
                 
                 const videoElement = document.getElementById('arenaVideoPlayer');
+                
+                // CORREÇÃO: Força o play mesmo se houver restrição de toque do navegador mobile ao trocar de sinal
                 videoElement.muted = false;
                 videoElement.volume = 1.0;
 
@@ -354,14 +369,32 @@
                     hlsInstancia = new Hls({ enableWorker: true, lowLatencyMode: true });
                     hlsInstancia.loadSource(sinal.videoUrl);
                     hlsInstancia.attachMedia(videoElement);
-                    hlsInstancia.on(Hls.Events.MANIFEST_PARSED, function() { videoElement.play().catch(() => {}); });
+                    hlsInstancia.on(Hls.Events.MANIFEST_PARSED, function() { 
+                        videoElement.play().catch(() => {
+                            // Se o navegador barrar o áudio automático ao mudar de sinal, mutamos o player para ele rodar na hora
+                            videoElement.muted = true;
+                            videoElement.play().catch(() => {});
+                        }); 
+                    });
+                    
+                    hlsInstancia.on(Hls.Events.ERROR, function (event, data) {
+                        if (data.fatal) {
+                            container.innerHTML = `
+                                <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; background:#111827; padding:15px; text-align:center;">
+                                    <div style="font-size:12px; font-weight:bold; color:#ef4444; margin-bottom:5px;">⚠️ SINAL FORA DO AR</div>
+                                    <div style="font-size:14px; color:#94a3b8;">Esta transmissão está offline. Escolha outro sinal abaixo do título!</div>
+                                </div>`;
+                        }
+                    });
                 } else {
                     videoElement.src = sinal.videoUrl;
                     videoElement.load();
-                    videoElement.play().catch(() => {});
+                    videoElement.play().catch(() => {
+                        videoElement.muted = true;
+                        videoElement.play().catch(() => {});
+                    });
                 }
             }
-            gerarBotoesDeSinalFlutuantes();
         }
 
         function mecanicaVoltarTempo() {
@@ -384,15 +417,15 @@
 
         function gerarBotoesDeSinalFlutuantes() {
             const container = document.getElementById('areaBotoesOpcoesAdicionais');
-            container.innerHTML = "";
+            container.innerHTML = ""; // Limpa os botões anteriores para evitar duplicações ou lixo na tela
             let listaSinais = modoAtualEstrutura === "aovivo" ? sinaisAoVivo : sinaisHistorico;
 
-            if (listaSinais.length > 1) {
+            if (listaSinais && listaSinais.length > 0) {
                 for (let i = 0; i < listaSinais.length; i++) {
                     const btn = document.createElement('button');
                     btn.className = `btn-opcao-dinamica ${indexSinalAtivo === i ? 'ativo' : ''}`;
                     btn.innerText = `Sinal ${i + 1}`;
-                    btn.onclick = () => { ejecutarSinalSelecionado(i); };
+                    btn.onclick = () => { executarSinalSelecionado(i); };
                     container.appendChild(btn);
                 }
             }
@@ -469,7 +502,8 @@
                 if(dados) {
                     document.getElementById('inputNomeEvento').value = dados.nomeEvento || "";
                     if(dados.sinaisConfig) {
-                        dados.sinaisConfig.forEach((s, idx) => criarNovaLinhaDeLink(s.videoUrl, s.manutencaoUrl, idx));
+                        let filtrados = dados.sinaisConfig.filter(el => el !== null);
+                        filtrados.forEach((s, idx) => criarNovaLinhaDeLink(s.videoUrl, s.manutencaoUrl, idx));
                     }
                 } else {
                     criarNovaLinhaDeLink("","", 0);
@@ -511,7 +545,6 @@
             }
 
             if (!nome) return alert("Defina um título!");
-
             let noSalvar = abaAtivaPainel === "aovivo" ? "aoVivo" : "historico";
             
             database.ref("arena_canais_separados/" + noSalvar).set({
